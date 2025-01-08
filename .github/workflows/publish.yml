@@ -17,17 +17,17 @@ jobs:
       - name: Build source distribution
         run: uv build --sdist
 
-      - name: Publish to TestPyPI
-        if: github.event_name == 'pull_request'
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-        run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
+      # - name: Publish to TestPyPI
+      #   if: github.event_name == 'pull_request'
+      #   env:
+      #     UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+      #   run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
 
-      # - name: Store artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: dist-sdist
-      #     path: dist/*.tar.gz
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-sdist
+          path: dist/*.tar.gz
 
   build-standard:
     strategy:
@@ -76,7 +76,7 @@ jobs:
           path: dist/*.whl
 
   upload:
-    needs: [build-standard, build-manylinux]
+    needs: [build-sdist, build-standard, build-manylinux]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get-version.outputs.version }}
@@ -104,7 +104,7 @@ jobs:
       #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       #   env:
       #     UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-      #   run: uv publish dist/* --verbose
+      #   run: uv publish dist/*.whl --verbose
 
       - name: Publish to TestPyPI
         if: github.event_name == 'pull_request'
@@ -128,15 +128,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       # Wait a bit for the package to be available on TestPyPI
-      - name: Wait for TestPyPI
-        run: sleep 30
-        if: runner.os != 'Windows'
-      - name: Wait for TestPyPI (Windows)
-        run: Start-Sleep -s 30
-        if: runner.os == 'Windows'
+      # - name: Wait for TestPyPI
+      #   run: sleep 30
+      #   if: runner.os != 'Windows'
+      # - name: Wait for TestPyPI (Windows)
+      #   run: Start-Sleep -s 30
+      #   if: runner.os == 'Windows'
 
       - name: Install from TestPyPI
-        run: uv pip install --index-url https://test.pypi.org/simple/ template_extension_module==${{ needs.upload.outputs.version }}
+        run: uv pip install --system --index-url https://test.pypi.org/simple/ template_extension_module==${{ needs.upload.outputs.version }}
 
       - name: Run tests
         run: uv run pytest

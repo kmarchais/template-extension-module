@@ -1,6 +1,6 @@
 [project]
 name = "template-extension-module"
-version = "0.0.1.dev2"
+version = "0.0.1.dev3"
 description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Kevin Marchais", email = "kevinmarchais@gmail.com" }]

@@ -20,7 +20,6 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-sdist
           path: dist/*.tar.gz
 
   build-standard:
@@ -41,7 +40,6 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ matrix.os }}-${{ matrix.python-version }}
           path: dist/*
 
   build-manylinux:
@@ -66,7 +64,6 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-manylinux-${{ matrix.python-version }}
           path: dist/*
 
   upload:

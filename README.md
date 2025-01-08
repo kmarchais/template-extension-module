@@ -72,8 +72,8 @@ template-extension-module/
 ├── src/                    # C++ source files
 ├── python/                 # Python source files
 ├── tests/                  # Test files
-├── CMakeLists.txt         # CMake configuration
-└── pyproject.toml         # Python project configuration
+├── CMakeLists.txt          # CMake configuration
+└── pyproject.toml          # Python project configuration
 ```
 
 ## Development Workflow

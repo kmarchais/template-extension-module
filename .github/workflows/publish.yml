@@ -57,7 +57,7 @@ jobs:
 
       - name: Setup Python and build wheel
         run: |
-          uv build --wheel --python-version ${{ matrix.python-version }}
+          uv build --wheel --python ${{ matrix.python-version }}
 
           auditwheel repair dist/*.whl --plat manylinux_2_28_x86_64 --only-plat
           rm dist/*.whl

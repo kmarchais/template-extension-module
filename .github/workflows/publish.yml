@@ -17,12 +17,6 @@ jobs:
       - name: Build source distribution
         run: uv build --sdist
 
-      # - name: Publish to TestPyPI
-      #   if: github.event_name == 'pull_request'
-      #   env:
-      #     UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-      #   run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
-
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -110,7 +104,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-        run: uv publish dist/*.whl --publish-url https://test.pypi.org/legacy/ --verbose
+        run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
 
   test-install:
     needs: upload
@@ -124,19 +118,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
-        with:
-          python-version: ${{ matrix.python-version }}
 
-      # Wait a bit for the package to be available on TestPyPI
-      # - name: Wait for TestPyPI
-      #   run: sleep 30
-      #   if: runner.os != 'Windows'
-      # - name: Wait for TestPyPI (Windows)
-      #   run: Start-Sleep -s 30
-      #   if: runner.os == 'Windows'
+      - name: Initialize virtual environment
+        run: uv venv -p ${{ matrix.python-version }}
 
       - name: Install from TestPyPI
-        run: uv pip install --system --index-url https://test.pypi.org/simple/ template_extension_module==${{ needs.upload.outputs.version }}
+        run: uv pip install --index-url https://test.pypi.org/simple/ template_extension_module==${{ needs.upload.outputs.version }}
 
       - name: Run tests
         run: uv run pytest

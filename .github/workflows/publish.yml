@@ -43,12 +43,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Build package
-        run: uv build
+        run: uv build --wheel
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.os }}-${{ matrix.python-version }}
-          path: dist/*
+          path: dist/*.whl
 
   build-manylinux:
     runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-manylinux-${{ matrix.python-version }}
-          path: dist/*
+          path: dist/*.whl
 
   upload:
     needs: [build-standard, build-manylinux]
@@ -110,7 +110,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-        run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
+        run: uv publish dist/*.whl --publish-url https://test.pypi.org/legacy/ --verbose
 
   test-install:
     needs: upload

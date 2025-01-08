@@ -121,10 +121,10 @@ jobs:
 
       # Wait a bit for the package to be available on TestPyPI
       - name: Wait for TestPyPI
-        run: sleep 30
+        run: sleep 60
         if: runner.os != 'Windows'
       - name: Wait for TestPyPI (Windows)
-        run: Start-Sleep -s 30
+        run: Start-Sleep -s 60
         if: runner.os == 'Windows'
 
       - name: Initialize virtual environment

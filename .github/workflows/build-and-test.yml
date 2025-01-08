@@ -29,6 +29,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - run: uv sync -v
+      - run: uv pip install . pytest
       - run: uv run python -c "import template_extension_module"
-      - run: uvx pytest
+      - run: uv run pytest

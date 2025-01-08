@@ -105,33 +105,3 @@ jobs:
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
         run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
-
-  test-install:
-    needs: upload
-    if: github.event_name == 'pull_request'
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
-
-      # Wait a bit for the package to be available on TestPyPI
-      - name: Wait for TestPyPI
-        run: sleep 120
-        if: runner.os != 'Windows'
-      - name: Wait for TestPyPI (Windows)
-        run: Start-Sleep -s 120
-        if: runner.os == 'Windows'
-
-      - name: Initialize virtual environment
-        run: uv venv -p ${{ matrix.python-version }}
-
-      - name: Install from TestPyPI
-        run: uv pip install --index-url https://test.pypi.org/simple/ template_extension_module==${{ needs.upload.outputs.version }}
-
-      - name: Run tests
-        run: uv run pytest

@@ -17,10 +17,17 @@ jobs:
       - name: Build source distribution
         run: uv build --sdist
 
-      - name: Store artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          path: dist/*.tar.gz
+      - name: Publish to TestPyPI
+        if: github.event_name == 'pull_request'
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: uv publish dist/* --publish-url https://test.pypi.org/legacy/ --verbose
+
+      # - name: Store artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: dist-sdist
+      #     path: dist/*.tar.gz
 
   build-standard:
     strategy:
@@ -40,6 +47,7 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: dist-${{ matrix.os }}-${{ matrix.python-version }}
           path: dist/*
 
   build-manylinux:
@@ -64,10 +72,11 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: dist-manylinux-${{ matrix.python-version }}
           path: dist/*
 
   upload:
-    needs: [build-sdist, build-standard, build-manylinux]
+    needs: [build-standard, build-manylinux]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get-version.outputs.version }}

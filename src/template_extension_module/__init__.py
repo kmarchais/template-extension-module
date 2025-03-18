@@ -9,11 +9,11 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
-
+logger = logging.getLogger(__name__)
 
 def main() -> None:
     """Log a message from the binary extension module."""
-    logging.info(hello_from_bin())
+    logger.info(hello_from_bin())
 
 
 __all__ = ["__version__", "main"]

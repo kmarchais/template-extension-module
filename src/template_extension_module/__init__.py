@@ -11,6 +11,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 def main() -> None:
     """Log a message from the binary extension module."""
     logger.info(hello_from_bin())

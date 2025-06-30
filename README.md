@@ -109,13 +109,11 @@ The project uses scikit-build-core as the build backend, which automatically han
 The project includes several GitHub Actions workflows:
 
 1. **Code Quality Checks**
-
    - Runs pre-commit hooks
    - Performs type checking
    - Ensures code formatting
 
 2. **Build and Test**
-
    - Builds the package
    - Runs test suite
    - Tests installation
